@@ -1,7 +1,7 @@
 # deno-bark
 
 ```typescript
-import { program } from "https://deno.land/x/bark@v0.3.0/mod.ts";
+import { program } from "https://deno.land/x/bark@v0.3.2/mod.ts";
 
 // father
 program
