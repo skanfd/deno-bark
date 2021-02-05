@@ -1,4 +1,4 @@
-import Command from "./Command.ts";
+import Command from "./src/Command.ts";
 
 const program = new Command("MyApp");
 

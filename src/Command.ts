@@ -1,31 +1,36 @@
-import { parse } from "./deps.ts";
-import Option from "./Option.ts";
 import Parameter from "./Parameter.ts";
+import Option from "./Option.ts";
+import { parse } from "../deps.ts";
 
 export default class Command {
   $father?: Command;
-  $name = "noname";
-  $aliases: string[] = [];
-  $version = "0.0.0";
-  $description = "No description.";
-  $parameters: Parameter[] = [];
-  $options: Option[] = [];
-  $action = (args: Record<string, unknown>): void => {
-    console.log(args);
-  };
-  $subcommands: Command[] = [];
+  $cmdstr: string;
+  $name: string;
+  $aliases: string[];
+  $version: string;
+  $description: string;
+  $parameters: Parameter[];
+  $options: Option[];
+  $subcommands: Command[];
+  $action: (args: Record<string, unknown>) => void;
 
   constructor(cmdstr: string, description?: string) {
     if (!/^\w+(\|\w+)*(\s\<\w+\>)*(\s\[\w+\])*$/.test(cmdstr)) {
       throw new Error("Command Defination Error: " + cmdstr);
     }
+    this.$cmdstr = cmdstr;
     const [names, ...paras] = cmdstr.split(/\s/g);
     const [name, ...aliases] = names.split(/\|/g);
     this.$name = name;
     this.$aliases = aliases;
-    paras.forEach((para) => {
-      this.$parameters.push(new Parameter(para));
-    });
+    this.$version = "0.0.0";
+    this.$description = description || "No description.";
+    this.$parameters = paras.map((para) => new Parameter(para));
+    this.$options = [];
+    this.$subcommands = [];
+    this.$action = (args: Record<string, unknown>) => {
+      console.log(args);
+    };
   }
 
   public name(name: string): Command {
@@ -80,10 +85,11 @@ export default class Command {
   }
 
   public defaultCommand(): Command {
-    if (!this.$father) return this;
-    this.$father.action(() => {
-      this.parse();
-    });
+    if (this.$father) {
+      this.$father.action(() => {
+        this.parse();
+      });
+    }
     return this;
   }
 
@@ -133,7 +139,7 @@ export default class Command {
 
     this.$options.forEach((opt) => {
       if (!parsed[opt.$name] && opt.$required) {
-        throw new Error("Option " + opt.$name + " is required.");
+        throw new Error("Option --" + opt.$name + " is required.");
       }
     });
 
