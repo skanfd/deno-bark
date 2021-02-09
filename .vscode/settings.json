@@ -1,6 +1,7 @@
 {
+    "deno.codeLens.references": true,
+    "deno.codeLens.referencesAllFunctions": true,
     "deno.enable": true,
     "deno.lint": true,
-    "deno.unstable": true,
-    "editor.tabSize": 2
+    "deno.unstable": true
 }

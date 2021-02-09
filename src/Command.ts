@@ -2,6 +2,9 @@ import Parameter from "./Parameter.ts";
 import Option from "./Option.ts";
 import { parse } from "../deps.ts";
 
+// deno-lint-ignore no-explicit-any
+type Args = Record<string, any>;
+
 export default class Command {
   $father?: Command;
   $cmdstr: string;
@@ -12,7 +15,7 @@ export default class Command {
   $parameters: Parameter[];
   $options: Option[];
   $subcommands: Command[];
-  $action: (args: Record<string, unknown>) => void;
+  $action: (args: Args) => void;
 
   constructor(cmdstr: string, description?: string) {
     if (!/^\w+(\|\w+)*(\s\<\w+\>)*(\s\[\w+\])*$/.test(cmdstr)) {
@@ -48,7 +51,7 @@ export default class Command {
     return this;
   }
 
-  public action(action: (args: Record<string, unknown>) => void): Command {
+  public action(action: (args: Args) => void): Command {
     this.$action = action;
     return this;
   }
